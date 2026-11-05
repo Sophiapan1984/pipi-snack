@@ -314,6 +314,10 @@
         <button class="btn small ghost" onclick="genNext7()">生成未来7天</button>
       </div>
       <div class="chips" id="adminDates"><span class="muted">暂无日期</span></div>
+      <div id="gen7Box" class="hidden" style="margin-top:10px;padding:10px 12px;background:#fff7ec;border:1px dashed #f3d9b8;border-radius:12px;">
+        <p class="muted" style="margin-bottom:8px;">👉 点击下方日期，加入「可选送货日期」（再次点击可取消）：</p>
+        <div class="chips" id="gen7Chips"></div>
+      </div>
 
       <h3 style="margin:18px 0 8px;color:#7a5230;font-size:15px;">⏰ 可选送货时间</h3>
       <div class="admin-row">
@@ -742,6 +746,7 @@ function renderAdmin(){
   $('newCatSel').innerHTML = config.categories.map((c,i)=>`<option value="${i}">${c.name}</option>`).join('')
     + `<option value="new">＋ 新分类</option>`;
   $('adminDates').innerHTML = (config.dates||[]).map(d=>`<div class="chip on">${d}<span class="del" onclick="delArr('dates','${d}')">×</span></div>`).join('') || '<span class="muted">暂无日期</span>';
+  renderGen7();
   $('adminTimes').innerHTML = (config.times||[]).map(t=>`<div class="chip on">${t}<span class="del" onclick="delArr('times','${t}')">×</span></div>`).join('') || '<span class="muted">暂无时段</span>';
   renderAdminOrdersOnly();
 }
@@ -782,12 +787,30 @@ function addDate(){
   if(!config.dates.includes(label)) config.dates.push(label);
   config.dates.sort(); $('newDate').value=''; renderAdmin(); renderChips();
 }
+let gen7List = [];   // 「生成未来7天」后供点击选择的日期列表
 function genNext7(){
-  const out=[];
+  gen7List = [];
   for(let i=1;i<=7;i++){ const d=new Date(); d.setDate(d.getDate()+i);
-    out.push(d.toLocaleDateString('zh-CN',{month:'2-digit',day:'2-digit',weekday:'short'})); }
-  config.dates = Array.from(new Set([...(config.dates||[]), ...out]));
-  renderAdmin(); renderChips();
+    gen7List.push(d.toLocaleDateString('zh-CN',{month:'2-digit',day:'2-digit',weekday:'short'})); }
+  $('gen7Box').classList.remove('hidden');
+  renderGen7();
+}
+// 点击「生成未来7天」里的某一天：加入 / 移出可选送货日期
+function toggleGen7Date(label){
+  if(!config.dates) config.dates=[];
+  const i = config.dates.indexOf(label);
+  if(i>=0) config.dates.splice(i,1);   // 已选 → 取消
+  else config.dates.push(label);       // 未选 → 加入
+  config.dates.sort();
+  renderAdmin(); renderChips(); renderGen7();
+}
+function renderGen7(){
+  const box = $('gen7Chips'); if(!box) return;
+  if(!gen7List.length){ $('gen7Box').classList.add('hidden'); return; }
+  box.innerHTML = gen7List.map(d=>{
+    const on = (config.dates||[]).includes(d);
+    return `<span class="chip ${on?'on':''}" onclick="toggleGen7Date('${d}')">${d}</span>`;
+  }).join('');
 }
 function addTime(){
   const t=$('newTime').value.trim(); if(!t) return toast('请填写时段');
