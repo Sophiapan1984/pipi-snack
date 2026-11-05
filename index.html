@@ -148,7 +148,7 @@
   <div class="tabs" id="tabs" data-page-node-id="K3Hh6IureucZG2YMRwSB2N">
     <div class="tab on" data-tab="order" onclick="switchTab('order')" data-page-node-id="3p3cBUIIxu2JB5VC2hKBHx">点餐下单</div>
     <div class="tab" data-tab="myorders" onclick="switchTab('myorders')" data-page-node-id="3VAy9T9NocJNb0BN3P9dUk">我的订单</div>
-    
+    <div class="tab hidden" data-tab="admin" id="adminTab" onclick="switchTab('admin')">店铺管理</div>
   </div>
 
   <!-- 顾客点餐 -->
@@ -531,7 +531,8 @@ async function enterApp(){
   $('loginView').classList.add('hidden');
   $('mainView').classList.remove('hidden');
   $('whoami').textContent = (me.role==='admin'?'👨‍🍳 管理员':'🧑 顾客') + ' · ' + me.phone.replace(/(\d{3})\d{4}(\d{4})/,'$1****$2');
-  if(me.role==='admin') $('adminTab').classList.remove('hidden');
+  const adminTabEl = $('adminTab');
+  if(adminTabEl && me.role==='admin') adminTabEl.classList.remove('hidden');
   db = await loadDB(); config = db;
   $('shopName').textContent = config.shopName;
   $('subtitle').textContent = config.subtitle;
