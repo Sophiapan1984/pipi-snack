@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="TKdTO0SLoPm6TYRAG36WGf">
+<head data-page-node-id="AfTc8hp8E7EF8emSAgU9Sp">
+<meta charset="UTF-8" data-page-node-id="kZEFOXluKiUc63aNl0O9ge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="Hg1U81di4TzF9Cg1VKcDR5">
+<title>皮皮家江西特色小吃 - 在线点餐</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(180deg, #fff7ec 0%, #ffe9d6 100%);
+    min-height: 100vh; color: #4a2c0f;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 16px 14px 60px; }
+  header {
+    text-align: center; padding: 26px 10px 18px;
+    background: linear-gradient(135deg, #d92b2b, #ff7a3c);
+    border-radius: 0 0 22px 22px; color: #fff;
+    box-shadow: 0 4px 18px rgba(217,43,43,.28);
+  }
+  header h1 { font-size: 26px; letter-spacing: 4px; text-shadow: 1px 2px 3px rgba(0,0,0,.25); }
+  header .sub { margin-top: 8px; font-size: 15px; opacity: .95; letter-spacing: 2px; }
+  header .notice { margin-top: 10px; font-size: 13px; background: rgba(255,255,255,.18); display: inline-block; padding: 4px 14px; border-radius: 20px; }
+  .card {
+    background: #fff; border-radius: 16px; padding: 18px 16px; margin-top: 16px;
+    box-shadow: 0 3px 12px rgba(160,90,20,.1);
+  }
+  .card h2 {
+    font-size: 17px; color: #c0392b; border-left: 4px solid #e67e22;
+    padding-left: 10px; margin-bottom: 12px;
+  }
+  .input {
+    width: 100%; padding: 12px 14px; border: 2px solid #f3d9b8; border-radius: 12px;
+    font-size: 16px; outline: none; background: #fffdf9;
+  }
+  .input:focus { border-color: #e67e22; }
+  .btn {
+    display: inline-block; border: none; cursor: pointer; font-size: 16px;
+    padding: 12px 22px; border-radius: 12px; background: linear-gradient(135deg,#e67e22,#d92b2b);
+    color: #fff; font-weight: bold; letter-spacing: 2px; transition: transform .1s;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn.full { width: 100%; margin-top: 14px; }
+  .btn.ghost { background: #fff; color: #c0392b; border: 2px solid #e67e22; }
+  .btn.small { font-size: 13px; padding: 6px 12px; border-radius: 8px; }
+  .cat-title { display: inline-block; background: #e8f5e9; color: #2e7d32; font-weight: bold; padding: 4px 14px; border-radius: 8px; margin: 14px 0 8px; font-size: 15px; }
+  .cat-title:first-child { margin-top: 0; }
+  .item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 4px; border-bottom: 1px dashed #f0e2cd; gap: 8px;
+  }
+  .item .name { font-size: 15px; color: #5d3a1a; font-weight: 500; flex: 1; }
+  .item .price { color: #d92b2b; font-weight: bold; font-size: 15px; white-space: nowrap; }
+  .stepper { display: flex; align-items: center; gap: 10px; }
+  .stepper button {
+    width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid #e67e22;
+    background: #fff7ec; color: #d35400; font-size: 17px; font-weight: bold; cursor: pointer; line-height: 1;
+  }
+  .stepper .qty { min-width: 22px; text-align: center; font-weight: bold; color: #5d3a1a; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .chip {
+    padding: 9px 15px; border-radius: 20px; border: 2px solid #f3d9b8; background: #fff;
+    cursor: pointer; font-size: 14px; color: #7a5230; user-select: none; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .chip.on { background: #e67e22; border-color: #e67e22; color: #fff; font-weight: bold; }
+  .cartbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+    background: #fff; box-shadow: 0 -3px 14px rgba(160,90,20,.18); padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .cartbar .info b { color: #d92b2b; font-size: 19px; }
+  .cartbar .info span { color: #8a6a45; font-size: 13px; display: block; }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 12px; }
+  .tag.new { background: #fff3e0; color: #e65100; }
+  .tag.done { background: #e8f5e9; color: #2e7d32; }
+  .order-card { border: 1px solid #f3e3cb; border-radius: 12px; padding: 12px; margin-bottom: 10px; background: #fffdf9; }
+  .order-card .top { display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+  .muted { color: #9c7f5c; font-size: 13px; }
+  .admin-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+  .admin-row .input { flex: 1; min-width: 100px; padding: 9px 10px; font-size: 14px; }
+  .del { color: #c0392b; cursor: pointer; font-size: 20px; padding: 0 6px; font-weight: bold; }
+  .tabs { display: flex; gap: 8px; margin-top: 16px; }
+  .tab { flex: 1; text-align: center; padding: 10px; border-radius: 12px 12px 0 0; background: #f7e8d2; color: #8a6a45; cursor: pointer; font-weight: bold; }
+  .tab.on { background: #fff; color: #c0392b; }
+  .toast {
+    position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+    background: rgba(40,40,40,.9); color: #fff; padding: 10px 22px; border-radius: 20px;
+    font-size: 14px; z-index: 99; display: none; max-width: 90%; text-align: center;
+  }
+  .hidden { display: none !important; }
+  .userbar { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 14px; color: #fff; gap: 10px; flex-wrap: wrap; }
+  .userbar a { color: #fff; opacity: .9; cursor: pointer; text-decoration: underline; }
+  .sync-tag { font-size: 11px; opacity: .85; }
+  .sync-tag.ok { color: #c8ffd0; }
+  .sync-tag.bad { color: #ffe0e0; }
+</style>
+</head>
+<body data-page-node-id="XRQ7r6tHL4wDJKX17AUW8l">
+<div id="toast" class="toast" data-page-node-id="f9CuXM9zDs5qkUpLetJ665"></div>
+
+<!-- 登录页 -->
+<div id="loginView" class="wrap" style="max-width:420px;" data-page-node-id="C4mHLObEeBL1hvCzbTQpHD">
+  <header style="margin-top:30px;" data-page-node-id="Tnz0ojc6tQutwcGDbSDC57">
+    <h1 data-page-node-id="hAFIFFeqXhv7jrseMqOFxC">皮皮家 江西特色小吃</h1>
+    <div class="sub" data-page-node-id="ZDzHjMTmYji7rLywxlyAtC">南昌拌粉 + 瓦罐汤 · 欢迎光临</div>
+    <div class="notice" data-page-node-id="1JbLmcumERemuyNpR5RVCi">可送货上门</div>
+  </header>
+  <div class="card" data-page-node-id="HdweW2CB4FgSJfaLCPT1Gl">
+    <h2 data-page-node-id="cRHWlA35DvpPdNmdZImuAY">手机号登录</h2>
+    <input class="input" id="phoneInput" type="tel" maxlength="11" placeholder="请输入手机号码" style="text-align:center;font-size:20px;letter-spacing:2px;" data-page-node-id="zOM645az8AAL7DKa3Yhnln">
+    <button class="btn full" onclick="login()" data-page-node-id="3ol5NNUWBBzA5pTFuWEzTM">登 录</button>
+    <p class="muted" style="margin-top:12px;text-align:center;" data-page-node-id="FTP4kFuzEoylIiwv9zP2B8">店主号登录后为管理员，其他号码为顾客下单</p>
+  </div>
+</div>
+
+<!-- 主页 -->
+<div id="mainView" class="wrap hidden" data-page-node-id="UYTZkSqerwwBbF1hcLQI2f">
+  <header data-page-node-id="0zWlmnesHuy72uMSWAezIz">
+    <h1 id="shopName" data-page-node-id="cQHUXBTWf4z2g0gGZLCg6J">皮皮家 江西特色小吃</h1>
+    <div class="sub" id="subtitle" data-page-node-id="p8mqTlTQYKx577OR5CzzDb">南昌拌粉 + 瓦罐汤</div>
+    <div class="notice" id="notice" data-page-node-id="qRQvbJqJwugIf5k9kU4xNX">可送货上门</div>
+    <div class="userbar" data-page-node-id="pGWGwZlSu7shaKQeVZKDf8">
+      <span id="whoami" data-page-node-id="hKQUDhwWpAHZowz0EXTqt8"></span>
+      <span id="syncTag" class="sync-tag" data-page-node-id="JKA3ZLNQB9NV9dH8hXHhv1"></span>
+      <a onclick="logout()" data-page-node-id="u9kgHNb4KxGUbQP0xztCAz">退出登录</a>
+    </div>
+  </header>
+
+  <div class="tabs" id="tabs" data-page-node-id="K3Hh6IureucZG2YMRwSB2N">
+    <div class="tab on" data-tab="order" onclick="switchTab('order')" data-page-node-id="3p3cBUIIxu2JB5VC2hKBHx">点餐下单</div>
+    <div class="tab" data-tab="myorders" onclick="switchTab('myorders')" data-page-node-id="3VAy9T9NocJNb0BN3P9dUk">我的订单</div>
+    <div class="tab hidden" data-tab="admin" id="adminTab" onclick="switchTab('admin')" data-page-node-id="w4ty0JRfpGwhoYBlmWkYdC">店铺管理</div>
+  </div>
+
+  <!-- 顾客点餐 -->
+  <div id="orderPane" data-page-node-id="xNnuv6lmTpRngZViHhsDPd">
+    <div class="card" id="menuCard" data-page-node-id="GAdYB5Qeg6RBKVUh0yBadn"></div>
+    <div class="card" data-page-node-id="hzQPXTxAJX8of2VXqZNTR4">
+      <h2 data-page-node-id="LviX5dEyP3EmPBtZfYDoA9">送货日期</h2>
+      <div class="chips" id="dateChips" data-page-node-id="u3el5AGh0QkDNBM2ZDrD5f"></div>
+      <h2 style="margin-top:16px;" data-page-node-id="M5bVSjPygN2gukUr9b9uLY">送货时间</h2>
+      <div class="chips" id="timeChips" data-page-node-id="jtyt59JThCERlUjarAmM0j"></div>
+    </div>
+    <div class="card" data-page-node-id="uB0kRJB6op61GK68d7hGbQ">
+      <h2 data-page-node-id="dXMBKnOxX8SHszFV1zxP9c">收货信息</h2>
+      <input class="input" id="addrInput" placeholder="送货地址（如：xx小区x栋xxx室）" style="margin-bottom:10px;" data-page-node-id="r4EiDZT2GltVvtatR4h1fv">
+      <input class="input" id="noteInput" placeholder="备注（口味、忌口等，可不填）" data-page-node-id="vxvsXCfZ9hDjAwIs6jR6GQ">
+      <button class="btn full" onclick="submitOrder()" data-page-node-id="FTbWeGyu4dp9JwQ5nFKMjW">提交订单</button>
+    </div>
+    <div style="height:70px;" data-page-node-id="2T6yixDZSizGRkeJCJeel6"></div>
+    <div class="cartbar" data-page-node-id="PLxF9PmBKCLuaFlkPlRyDb">
+      <div class="info" data-page-node-id="Njh4NdZtoomkvpqeDsldIf"><span id="cartCount" data-page-node-id="yUyoLnwM9mQuulNYBY6FQj">已选 0 份</span><b id="cartTotal" data-page-node-id="eOtLLTxEH6BH9tgZkGRwSb">¥0</b></div>
+      <button class="btn" onclick="scrollToOrder()" data-page-node-id="TZEMEuv4Dygpz2Xa9eBlhx">去结算</button>
+    </div>
+  </div>
+
+  <!-- 我的订单 -->
+  <div id="myordersPane" class="hidden" data-page-node-id="JtzJFdTE0MIl9bYahX44AI">
+    <div class="card" data-page-node-id="Sm0ugu7acYdD5WzSNl7Ylu"><h2 data-page-node-id="mOZvm4pNeGCAmvV4YdHUjf">我的订单</h2><div id="myOrderList" class="muted" data-page-node-id="aSuINgyiCDsVllGXiNc2Mj">暂无订单</div></div>
+  </div>
+
+  <!-- 管理员 -->
+  <div id="adminPane" class="hidden" data-page-node-id="26glkofpk0dedwjdUA8pMO">
+    <div class="card" data-page-node-id="X3fKmAesZ0XkmdFKZrwg37">
+      <h2 data-page-node-id="5oMjaH44ITbXm6fFYDrZ4t">店铺公告</h2>
+      <div class="admin-row" data-page-node-id="VCOQLnI6dCqGrjD5pn33JZ">
+        <input class="input" id="noticeInput" placeholder="店铺公告" data-page-node-id="zif2WArcgXqMw825CbStvx">
+        <button class="btn small" onclick="saveNotice()" data-page-node-id="65drNDnUHRNAEFoxAt4mQX">保存公告</button>
+      </div>
+    </div>
+    <div class="card" data-page-node-id="6DEjvUDGFmDZMjOuBXnTBU">
+      <h2 data-page-node-id="IgMDlJI0L943hzhI6tBIy5">菜单管理（菜品 / 价格）</h2>
+      <div id="adminMenu" data-page-node-id="H9Xf3wN8MTqlIEmykul8Ar"></div>
+      <div class="admin-row" style="margin-top:6px;" data-page-node-id="2zm4FP2K1EsMoEnNcnoTVL">
+        <select class="input" id="newCatSel" style="flex:0 0 110px;" data-page-node-id="bQxIqAH7RHY2dXupBUxxz9"></select>
+        <input class="input" id="newItemName" placeholder="菜品名称" data-page-node-id="IrVYO08PvNCRQ4dVwY4nSS">
+        <input class="input" id="newItemPrice" type="number" min="0" placeholder="价格" style="max-width:90px;" data-page-node-id="NuFETcZAtjQsOGmjwaiXeu">
+        <button class="btn small" onclick="addItem()" data-page-node-id="IrvgNPpY2lRkJFBGA73Ehe">添加</button>
+      </div>
+    </div>
+    <div class="card" data-page-node-id="idwKhK9KdUWAjmycC8atB5">
+      <h2 data-page-node-id="N4iKEAbzyksKjMZ0EK5gbQ">可选送货日期</h2>
+      <div class="admin-row" data-page-node-id="zYn5oPdFbMmk4GN1d07YxI">
+        <input class="input" id="newDate" type="date" data-page-node-id="bMpASl5ZCphYiO4jnCTTwU">
+        <button class="btn small" onclick="addDate()" data-page-node-id="xrhWkRNmMrgYZ4AaqC3CY6">添加日期</button>
+        <button class="btn small ghost" onclick="genNext7()" data-page-node-id="NGaMB2naZYodIVkrwBIhQI">生成未来7天</button>
+      </div>
+      <div class="chips" id="adminDates" data-page-node-id="NZvCCSYOdQDTBHixlBScFt"></div>
+    </div>
+    <div class="card" data-page-node-id="1F3lOHlBabPqmBFHBxP8rN">
+      <h2 data-page-node-id="aDgACvIlsBBpqXY8Wfrp4Z">可选送货时间</h2>
+      <div class="admin-row" data-page-node-id="WPwlZ0IfEhTQbRSffBENHd">
+        <input class="input" id="newTime" placeholder="如 11:00-11:30" data-page-node-id="CGXVyvaz3kh4ll2bYTWgYw">
+        <button class="btn small" onclick="addTime()" data-page-node-id="c76TMYVFi8yphVbEnzufvC">添加时段</button>
+      </div>
+      <div class="chips" id="adminTimes" data-page-node-id="RHX2t8tMjRcUGNT6NhxBV2"></div>
+    </div>
+    <div class="card" data-page-node-id="gVemWZ4Sjh4XmBw6NtRcTd">
+      <h2 data-page-node-id="NyrlVvSmMLCRi5DGUFbt7k">订单管理</h2>
+      <div id="adminOrders" class="muted" data-page-node-id="Hw5t5YbM0SqLTC759pqtmR">暂无订单</div>
+    </div>
+    <button class="btn full" onclick="saveConfig()" data-page-node-id="NGlusJhALCQgzXFjFAZ5Bo">保存全部设置</button>
+  </div>
+</div>
+
+<script>
+// ============ 配置 ============
+const ADMIN_PHONE = '19962801865';
+// 云端 KV（jsonstore.io，支持 CORS，任意浏览器可直连）。可在链接后加 ?kv=你的token 覆盖。
+const KV_TOKEN = 'pipisnack2026db8f3c2a1b3d4e6f9a0b1c2d3e4f5a6b';
+const params = new URLSearchParams(location.search);
+const KV_URL = 'https://www.jsonstore.io/' + (params.get('kv') || KV_TOKEN);
+
+const $ = id => document.getElementById(id);
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2400); }
+
+// ============ 数据层（云端 KV + 本地兜底） ============
+const DEFAULT_DB = {
+  shopName: '皮皮家江西特色小吃',
+  subtitle: '南昌拌粉 + 瓦罐汤',
+  notice: '可送货上门，欢迎订购！',
+  categories: [
+    { name: '主食', items: [
+      { name: '拌粉/面/空心粉', price: 10 },
+      { name: '汤粉/面/空心粉', price: 12 },
+      { name: '酸辣粉', price: 12 }
+    ]},
+    { name: '浇头', items: [
+      { name: '红烧牛杂', price: 5 },
+      { name: '鸡腿', price: 5 },
+      { name: '荷包蛋', price: 2 },
+      { name: '凉拌腐竹', price: 2 }
+    ]},
+    { name: '汤品', items: [
+      { name: '海带排骨汤', price: 8 },
+      { name: '玉米排骨汤', price: 8 },
+      { name: '山药排骨汤', price: 8 },
+      { name: '萝卜排骨汤', price: 8 },
+      { name: '鸡蛋肉饼汤', price: 8 },
+      { name: '皮蛋肉饼汤', price: 8 },
+      { name: '鸡汤', price: 8 }
+    ]}
+  ],
+  dates: [],
+  times: ['11:00-11:30', '11:30-12:00', '12:00-12:30', '17:30-18:00', '18:00-18:30'],
+  orders: []
+};
+
+let cloudOK = false;
+async function loadDB(){
+  try{
+    const r = await fetch(KV_URL, { cache:'no-store' });
+    if(r.ok){
+      let j = await r.json();
+      if(j && j.result!==undefined) j = j.result;      // jsonstore 包装兼容
+      if(j && (Array.isArray(j.categories) || Array.isArray(j.orders))){
+        cloudOK = true;
+        localStorage.setItem('pp_db', JSON.stringify(j));
+        setSync(true);
+        return j;
+      }
+    }
+  }catch(e){ /* 云端不可达，走本地 */ }
+  cloudOK = false; setSync(false);
+  const l = localStorage.getItem('pp_db');
+  if(l){ try{ return JSON.parse(l); }catch(e){} }
+  const d = JSON.parse(JSON.stringify(DEFAULT_DB));
+  return d;
+}
+async function saveDB(db){
+  localStorage.setItem('pp_db', JSON.stringify(db));
+  try{
+    await fetch(KV_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(db) });
+    cloudOK = true; setSync(true);
+  }catch(e){
+    cloudOK = false; setSync(false);
+    toast('⚠️ 云端同步失败，已存本地（本机可用）');
+  }
+}
+function setSync(ok){
+  const t = $('syncTag');
+  if(!t) return;
+  t.textContent = ok ? '☁ 云端已同步' : '💾 本地模式';
+  t.className = 'sync-tag ' + (ok ? 'ok' : 'bad');
+}
+
+// ============ 全局状态 ============
+let me = null;          // {phone, role}
+let db = null;          // 完整数据库
+let config = null;      // 别名 = db
+let cart = {};          // ci_ii -> qty
+let selDate = '', selTime = '';
+
+// ---------- 登录 ----------
+async function login(){
+  const phone = $('phoneInput').value.trim();
+  if(!/^1\d{10}$/.test(phone)) return toast('请输入 11 位手机号');
+  me = { phone, role: phone === ADMIN_PHONE ? 'admin' : 'customer' };
+  localStorage.setItem('pp_phone', phone);
+  await enterApp();
+}
+function logout(){ localStorage.removeItem('pp_phone'); location.reload(); }
+async function enterApp(){
+  $('loginView').classList.add('hidden');
+  $('mainView').classList.remove('hidden');
+  $('whoami').textContent = (me.role==='admin'?'👨‍🍳 管理员':'🧑 顾客') + ' · ' + me.phone.replace(/(\d{3})\d{4}(\d{4})/,'$1****$2');
+  if(me.role==='admin') $('adminTab').classList.remove('hidden');
+  db = await loadDB(); config = db;
+  $('shopName').textContent = config.shopName;
+  $('subtitle').textContent = config.subtitle;
+  $('notice').textContent = config.notice;
+  $('noticeInput').value = config.notice;
+  renderMenu(); renderChips(); renderAdmin();
+}
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on', e.dataset.tab===t));
+  $('orderPane').classList.toggle('hidden', t!=='order');
+  $('myordersPane').classList.toggle('hidden', t!=='myorders');
+  $('adminPane').classList.toggle('hidden', t!=='admin');
+  if(t==='myorders') loadMyOrders();
+  if(t==='admin') renderAdmin();
+}
+function scrollToOrder(){ window.scrollTo({top: document.body.scrollHeight, behavior:'smooth'}); }
+
+// ---------- 顾客：菜单 ----------
+function renderMenu(){
+  const c = $('menuCard'); c.innerHTML = '<h2>今日菜单</h2>';
+  config.categories.forEach((cat,ci)=>{
+    const t = document.createElement('div'); t.className='cat-title'; t.textContent=cat.name; c.appendChild(t);
+    cat.items.forEach((it,ii)=>{
+      const key = ci+'_'+ii, qty = cart[key]||0;
+      const row = document.createElement('div'); row.className='item';
+      row.innerHTML = `<div class="name">${it.name}</div><div class="price">¥${it.price}</div>
+        <div class="stepper">
+          <button onclick="chQty('${key}',-1)">−</button>
+          <span class="qty" id="q_${key}">${qty}</span>
+          <button onclick="chQty('${key}',1)">＋</button>
+        </div>`;
+      c.appendChild(row);
+    });
+  });
+  updateCart();
+}
+function chQty(key, d){
+  cart[key] = Math.max(0,(cart[key]||0)+d);
+  $('q_'+key).textContent = cart[key];
+  updateCart();
+}
+function cartItems(){
+  const items=[];
+  config.categories.forEach((cat,ci)=>cat.items.forEach((it,ii)=>{
+    const q = cart[ci+'_'+ii]||0;
+    if(q>0) items.push({name:it.name, price:it.price, qty:q, cat:cat.name});
+  }));
+  return items;
+}
+function updateCart(){
+  const items = cartItems();
+  $('cartCount').textContent = '已选 '+items.reduce((s,i)=>s+i.qty,0)+' 份';
+  $('cartTotal').textContent = '¥'+items.reduce((s,i)=>s+i.price*i.qty,0);
+}
+function renderChips(){
+  const dc = $('dateChips'); dc.innerHTML='';
+  (config.dates||[]).forEach(d=>{
+    const s = document.createElement('div'); s.className='chip'+(selDate===d?' on':''); s.textContent=d;
+    s.onclick=()=>{selDate=d; renderChips();}; dc.appendChild(s);
+  });
+  if(!config.dates||!config.dates.length) dc.innerHTML='<span class="muted">店主暂未设置可选日期</span>';
+  const tc = $('timeChips'); tc.innerHTML='';
+  (config.times||[]).forEach(t=>{
+    const s = document.createElement('div'); s.className='chip'+(selTime===t?' on':''); s.textContent=t;
+    s.onclick=()=>{selTime=t; renderChips();}; tc.appendChild(s);
+  });
+  if(!config.times||!config.times.length) tc.innerHTML='<span class="muted">店主暂未设置可选时间</span>';
+}
+async function submitOrder(){
+  const items = cartItems();
+  if(!items.length) return toast('请先选择菜品');
+  if(!selDate) return toast('请选择送货日期');
+  if(!selTime) return toast('请选择送货时间');
+  const address = $('addrInput').value.trim();
+  if(!address) return toast('请填写送货地址');
+  const order = {
+    id: Date.now(),
+    phone: me.phone,
+    items,
+    total: items.reduce((s,i)=>s+i.price*i.qty,0),
+    date: selDate, time: selTime,
+    address, note: $('noteInput').value.trim(),
+    status: '新订单',
+    createdAt: new Date().toLocaleString('zh-CN', { timeZone:'Asia/Shanghai' })
+  };
+  const d = await loadDB();
+  d.orders.unshift(order);
+  await saveDB(d);
+  db = d; config = d;
+  toast('✅ 下单成功！店主会尽快处理');
+  cart={}; selDate=''; selTime='';
+  $('addrInput').value=''; $('noteInput').value='';
+  renderMenu(); renderChips();
+}
+
+// ---------- 顾客：我的订单 ----------
+function loadMyOrders(){
+  const mine = (db.orders||[]).filter(o=>o.phone===me.phone);
+  $('myOrderList').innerHTML = mine.length ? mine.map(orderHtml).join('') : '<span class="muted">暂无订单</span>';
+}
+function orderHtml(o){
+  return `<div class="order-card">
+    <div class="top"><span>${o.date} ${o.time}</span><span class="tag ${o.status==='已完成'?'done':'new'}">${o.status}</span></div>
+    <div style="margin:6px 0;">${o.items.map(i=>i.name+'×'+i.qty).join('、')}</div>
+    <div class="top"><span class="muted">${o.address}${o.note?(' · 备注:'+o.note):''}</span><b style="color:#d92b2b;">¥${o.total}</b></div>
+  </div>`;
+}
+
+// ---------- 管理员 ----------
+function renderAdmin(){
+  if(me.role!=='admin') return;
+  const am = $('adminMenu'); am.innerHTML='';
+  config.categories.forEach((cat,ci)=>{
+    const t = document.createElement('div'); t.className='cat-title'; t.textContent=cat.name;
+    t.title='点击修改分类名'; t.style.cursor='pointer';
+    t.onclick=()=>{ const n=prompt('修改分类名',cat.name); if(n){cat.name=n; renderAdmin();} };
+    am.appendChild(t);
+    cat.items.forEach((it,ii)=>{
+      const row = document.createElement('div'); row.className='admin-row';
+      row.innerHTML = `<input class="input" value="${it.name}" onchange="config.categories[${ci}].items[${ii}].name=this.value">
+        <input class="input" type="number" min="0" value="${it.price}" style="max-width:90px;" onchange="config.categories[${ci}].items[${ii}].price=+this.value||0">
+        <span class="del" onclick="delItem(${ci},${ii})">×</span>`;
+      am.appendChild(row);
+    });
+  });
+  $('newCatSel').innerHTML = config.categories.map((c,i)=>`<option value="${i}">${c.name}</option>`).join('')
+    + `<option value="new">＋ 新分类</option>`;
+  $('adminDates').innerHTML = (config.dates||[]).map(d=>`<div class="chip on">${d}<span class="del" onclick="delArr('dates','${d}')">×</span></div>`).join('') || '<span class="muted">暂无日期</span>';
+  $('adminTimes').innerHTML = (config.times||[]).map(t=>`<div class="chip on">${t}<span class="del" onclick="delArr('times','${t}')">×</span></div>`).join('') || '<span class="muted">暂无时段</span>';
+  const ao = $('adminOrders');
+  if(!db.orders || !db.orders.length){ ao.innerHTML='<span class="muted">暂无订单</span>'; return; }
+  ao.innerHTML = db.orders.map(o=>`<div class="order-card">
+    <div class="top"><span>${o.date} ${o.time} · ${o.phone.replace(/(\d{3})\d{4}(\d{4})/,'$1****$2')}</span>
+      <span class="tag ${o.status==='已完成'?'done':'new'}">${o.status}</span></div>
+    <div style="margin:6px 0;">${o.items.map(i=>i.name+'×'+i.qty).join('、')}</div>
+    <div class="top"><span class="muted">${o.address}${o.note?(' · 备注:'+o.note):''}</span><b style="color:#d92b2b;">¥${o.total}</b></div>
+    <div style="margin-top:8px;">
+      ${o.status==='新订单'
+        ? `<button class="btn small" onclick="setStatus(${o.id},'已完成')">标记完成</button>`
+        : `<button class="btn small ghost" onclick="setStatus(${o.id},'新订单')">恢复新单</button>`}
+    </div>
+  </div>`).join('');
+}
+function delItem(ci,ii){ config.categories[ci].items.splice(ii,1); renderAdmin(); }
+function addItem(){
+  const ni=$('newItemName').value.trim(), np=+$('newItemPrice').value;
+  if(!ni||!(np>=0)) return toast('请填写菜品名和价格');
+  let sel=$('newCatSel').value;
+  if(sel==='new'){ const n=prompt('新分类名称'); if(!n) return; config.categories.push({name:n,items:[]}); sel=config.categories.length-1; }
+  config.categories[+sel].items.push({name:ni,price:np});
+  $('newItemName').value=''; $('newItemPrice').value='';
+  renderAdmin();
+}
+function delArr(key,val){ config[key]=config[key].filter(x=>x!==val); renderAdmin(); }
+function addDate(){
+  const d=$('newDate').value; if(!d) return toast('请选择日期');
+  if(!config.dates.includes(d)) config.dates.push(d);
+  config.dates.sort(); $('newDate').value=''; renderAdmin();
+}
+function genNext7(){
+  const out=[];
+  for(let i=1;i<=7;i++){ const d=new Date(); d.setDate(d.getDate()+i);
+    out.push(d.toLocaleDateString('zh-CN',{month:'2-digit',day:'2-digit',weekday:'short'})); }
+  config.dates = Array.from(new Set([...(config.dates||[]), ...out]));
+  renderAdmin();
+}
+function addTime(){
+  const t=$('newTime').value.trim(); if(!t) return toast('请填写时段');
+  if(!config.times.includes(t)) config.times.push(t);
+  $('newTime').value=''; renderAdmin();
+}
+async function saveNotice(){
+  config.notice = $('noticeInput').value.trim() || config.notice;
+  $('notice').textContent = config.notice;
+  await commitConfig();
+}
+async function commitConfig(){
+  const d = await loadDB();
+  d.categories = config.categories; d.dates = config.dates; d.times = config.times; d.notice = config.notice;
+  await saveDB(d);
+  db = d; config = d;
+}
+async function saveConfig(){
+  await commitConfig();
+  toast('✅ 设置已保存，顾客端即时生效');
+  renderChips(); renderAdmin();
+}
+async function setStatus(id, status){
+  const d = await loadDB();
+  const o = d.orders.find(x=>x.id===id);
+  if(o){ o.status = status; await saveDB(d); db=d; config=d; renderAdmin(); }
+}
+
+// 自动登录
+(async function init(){
+  const p = localStorage.getItem('pp_phone');
+  if(p && /^1\d{10}$/.test(p)){
+    me = { phone:p, role: p===ADMIN_PHONE?'admin':'customer' };
+    await enterApp();
+  }
+})();
+</script>
+</body>
+</html>
