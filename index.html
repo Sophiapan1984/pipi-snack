@@ -233,6 +233,7 @@
     <div class="card" data-page-node-id="uB0kRJB6op61GK68d7hGbQ">
       <h2 data-page-node-id="dXMBKnOxX8SHszFV1zxP9c">收货信息</h2>
       <input class="input" id="addrInput" placeholder="送货地址（如：xx小区x栋xxx室）" style="margin-bottom:10px;" data-page-node-id="r4EiDZT2GltVvtatR4h1fv">
+      <input class="input" id="contactInput" placeholder="联系方式（手机号或微信，便于店主联系）" style="margin-bottom:10px;">
       <input class="input" id="noteInput" placeholder="备注（口味、忌口等，可不填）" data-page-node-id="vxvsXCfZ9hDjAwIs6jR6GQ">
       <button class="btn full" onclick="submitOrder()" data-page-node-id="FTbWeGyu4dp9JwQ5nFKMjW">提交订单</button>
     </div>
@@ -538,6 +539,7 @@ async function enterApp(){
   $('subtitle').textContent = config.subtitle;
   $('notice').textContent = config.notice;
   $('noticeInput').value = config.notice;
+  if($('contactInput')) $('contactInput').value = me.phone;
   renderMenu(); renderChips(); renderAdmin();
   startRefresh();   // 启动实时刷新，顾客端自动同步管理员设置
 }
@@ -685,6 +687,7 @@ async function submitOrder(){
   const order = {
     id: Date.now(),
     phone: me.phone,
+    contact: $('contactInput').value.trim() || me.phone,
     items,
     total: items.reduce((s,i)=>s+i.price*i.qty,0),
     date: selDate, time: selTime,
@@ -699,6 +702,7 @@ async function submitOrder(){
   toast('✅ 下单成功！店主会尽快处理');
   cart={}; specCart={}; selDate=''; selTime='';
   $('addrInput').value=''; $('noteInput').value='';
+  if($('contactInput')) $('contactInput').value = me.phone;
   renderMenu(); renderChips();
 }
 
@@ -711,6 +715,7 @@ function orderHtml(o){
   return `<div class="order-card">
     <div class="top"><span>${o.date} ${o.time}</span><span class="tag ${o.status==='已完成'?'done':'new'}">${o.status}</span></div>
     <div style="margin:6px 0;">${o.items.map(i=>i.name+'×'+i.qty).join('、')}</div>
+    <div class="muted">📞 联系方式：${o.contact||o.phone}</div>
     <div class="top"><span class="muted">${o.address}${o.note?(' · 备注:'+o.note):''}</span><b style="color:#d92b2b;">¥${o.total}</b></div>
   </div>`;
 }
@@ -744,6 +749,7 @@ function ordersManageHtml(){
     <div class="top"><span>${o.date} ${o.time} · ${o.phone.replace(/(\d{3})\d{4}(\d{4})/,'$1****$2')}</span>
       <span class="tag ${o.status==='已完成'?'done':'new'}">${o.status}</span></div>
     <div style="margin:6px 0;">${o.items.map(i=>i.name+'×'+i.qty).join('、')}</div>
+    <div class="muted">📞 联系方式：${o.contact||o.phone}</div>
     <div class="top"><span class="muted">${o.address}${o.note?(' · 备注:'+o.note):''}</span><b style="color:#d92b2b;">¥${o.total}</b></div>
     <div style="margin-top:8px;">
       ${o.status==='新订单'
